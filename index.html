@@ -1,0 +1,2632 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fraud Detection System – Full Suite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* ===== BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: #0a0e1a;
+            color: #ffffff;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        #loginPage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a0a2e 25%, #16213e 50%, #0a0e1a 100%);
+            overflow: hidden;
+        }
+        #loginPage::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(120, 0, 255, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(0, 100, 255, 0.10) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 20%, rgba(200, 0, 255, 0.08) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(168, 85, 247, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(16, 20, 40, 0.92);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 40px;
+            border: 1px solid rgba(120, 0, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(120, 0, 255, 0.08);
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* ===== BRAND SECTION ===== */
+        .brand .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .brand .logo i {
+            font-size: 34px;
+            color: #a855f7;
+            background: rgba(168, 85, 247, 0.15);
+            padding: 14px;
+            border-radius: 16px;
+            animation: glow 3s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(168, 85, 247, 0.3); }
+        }
+        .brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .brand h1 span {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .brand .subtitle {
+            color: #a855f7;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+        .brand .tagline {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 25px 0 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(168, 85, 247, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.1);
+        }
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card .number.green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .number.orange {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card .trend {
+            font-size: 10px;
+            color: #22c55e;
+            margin-top: 2px;
+            position: relative;
+            z-index: 1;
+        }
+        .stat-card .trend.danger {
+            color: #ef4444;
+        }
+        .stat-card .trend.warning {
+            color: #f59e0b;
+        }
+        .footer {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 11px;
+            margin-top: 30px;
+        }
+
+        /* ===== RIGHT PANEL ===== */
+        .right-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .right-panel .welcome h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .right-panel .welcome p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+        }
+
+        /* ===== FORM ===== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            font-size: 14px;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-group input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0 22px 0;
+        }
+        .form-options .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .form-options .remember input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #a855f7;
+            cursor: pointer;
+        }
+        .form-options .forgot-link {
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+        .form-options .forgot-link:hover {
+            color: #a855f7;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #a855f7;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .register-link a:hover {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+
+        /* ===== WEATHER & WINDOWS ===== */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+        }
+        .weather-widget i {
+            font-size: 18px;
+            color: #f59e0b;
+        }
+        .windows-activation {
+            text-align: center;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .windows-activation p {
+            color: rgba(255, 255, 255, 0.12);
+            font-size: 11px;
+        }
+        .windows-activation p i {
+            margin-right: 6px;
+        }
+
+        /* ===== REGISTRATION MODAL ===== */
+        .register-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-modal.show {
+            display: flex;
+        }
+        .register-modal .modal-content {
+            background: linear-gradient(145deg, #1a1c3a, #2d1b4e);
+            border-radius: 24px;
+            padding: 35px;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(168, 85, 247, 0.05);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.4s ease;
+        }
+        @keyframes modalSlideIn {
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .register-modal .modal-content h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .register-modal .modal-content .sub-text {
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .register-modal .form-group {
+            margin-bottom: 16px;
+        }
+        .register-modal .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 5px;
+        }
+        .register-modal .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .register-modal .form-group input:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+        .register-modal .form-group .error-text {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        .register-modal .form-group .error-text.show {
+            display: block;
+        }
+        .register-modal .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .register-modal .modal-actions .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .register-modal .modal-actions .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff;
+        }
+        .register-modal .modal-actions .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+        }
+        .register-modal .modal-actions .btn-cancel {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .register-modal .modal-actions .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== DASHBOARD ===== */
+        #dashboardPage {
+            display: none;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .top-nav {
+            background: rgba(16, 20, 40, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .top-nav .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .top-nav .brand i {
+            font-size: 24px;
+            color: #a855f7;
+            background: rgba(168, 85, 247, 0.15);
+            padding: 10px;
+            border-radius: 12px;
+        }
+        .top-nav .brand h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .top-nav .brand h2 span {
+            color: #a855f7;
+        }
+        .top-nav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .top-nav .nav-right .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(168, 85, 247, 0.05);
+            padding: 8px 16px 8px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(168, 85, 247, 0.1);
+        }
+        .top-nav .nav-right .user-info .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .top-nav .nav-right .user-info .name {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .top-nav .nav-right .logout-btn {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .top-nav .nav-right .logout-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 25px;
+        }
+
+        .sidebar {
+            background: rgba(16, 20, 40, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.1);
+            border-radius: 16px;
+            padding: 16px 12px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2px;
+            font-size: 14px;
+        }
+        .sidebar .menu-item:hover {
+            background: rgba(168, 85, 247, 0.08);
+            color: #ffffff;
+        }
+        .sidebar .menu-item.active {
+            background: rgba(168, 85, 247, 0.12);
+            color: #a855f7;
+            border-left: 3px solid #a855f7;
+        }
+        .sidebar .menu-item i {
+            width: 20px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .sidebar .menu-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 10px 0;
+        }
+        .sidebar .menu-badge {
+            margin-left: auto;
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+            font-size: 10px;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .page-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .section-header h2 i {
+            color: #a855f7;
+            margin-right: 10px;
+        }
+        .section-header .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+        }
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .card {
+            background: rgba(16, 20, 40, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(168, 85, 247, 0.15);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .card-header .badge {
+            font-size: 11px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        table th {
+            text-align: left;
+            padding: 12px 12px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        table td {
+            padding: 12px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.8);
+        }
+        table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .status-badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .status-badge.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        .status-badge.fraud {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+        .status-badge.resolved {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        .status-badge.inactive {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .status-badge.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        .status-badge.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        .status-badge.low {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .empty-state i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .search-bar input,
+        .search-bar select {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 180px;
+        }
+        .search-bar input:focus,
+        .search-bar select:focus {
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .search-bar select option {
+            background: #1a1c3a;
+        }
+
+        .stats-grid-dash {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .stat-card-dash {
+            background: rgba(16, 20, 40, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .stat-card-dash:hover {
+            background: rgba(168, 85, 247, 0.05);
+            border-color: rgba(168, 85, 247, 0.15);
+            transform: translateY(-2px);
+        }
+        .stat-card-dash .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .stat-card-dash .stat-icon.red {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+        .stat-card-dash .stat-icon.green {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        .stat-card-dash .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        .stat-card-dash .stat-icon.orange {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        .stat-card-dash .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .stat-card-dash .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .stat-card-dash .stat-change {
+            font-size: 12px;
+            margin-top: 6px;
+        }
+        .stat-card-dash .stat-change.up {
+            color: #22c55e;
+        }
+        .stat-card-dash .stat-change.down {
+            color: #ef4444;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .chart-card {
+            background: rgba(16, 20, 40, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 120px;
+            gap: 10px;
+        }
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .bar-item .bar {
+            width: 100%;
+            border-radius: 6px 6px 0 0;
+            min-height: 8px;
+            transition: height 0.5s ease;
+            background: linear-gradient(180deg, #a855f7, #7c3aed);
+        }
+        .bar-item .bar-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .quick-action-btn {
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .quick-action-btn:hover {
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.2);
+        }
+        .quick-action-btn i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+        .quick-action-btn.danger i {
+            color: #a855f7;
+        }
+        .quick-action-btn.success i {
+            color: #22c55e;
+        }
+        .quick-action-btn.warning i {
+            color: #f59e0b;
+        }
+        .quick-action-btn.info i {
+            color: #3b82f6;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .activity-item.fraud {
+            border-left-color: #ff4444;
+        }
+        .activity-item.report {
+            border-left-color: #f59e0b;
+        }
+        .activity-item.user {
+            border-left-color: #22c55e;
+        }
+        .activity-item .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .activity-item .activity-icon.red {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff4444;
+        }
+        .activity-item .activity-icon.orange {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        .activity-item .activity-icon.green {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        .activity-item .activity-details {
+            flex: 1;
+        }
+        .activity-item .activity-details .title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .activity-item .activity-details .time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .activity-item .activity-status {
+            font-size: 11px;
+            padding: 3px 12px;
+            border-radius: 20px;
+        }
+        .activity-item .activity-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+        .activity-item .activity-status.detected {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff4444;
+        }
+        .activity-item .activity-status.resolved {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+        .toast {
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            animation: slideIn 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast.danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .toast.success {
+            background: #16a34a;
+            color: #fff;
+        }
+        .toast.warning {
+            background: #d97706;
+            color: #fff;
+        }
+        .toast.info {
+            background: #7c3aed;
+            color: #fff;
+        }
+        .toast i {
+            font-size: 20px;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ===== FRAUD BANNER ===== */
+        .fraud-banner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 600;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 10px 40px rgba(220, 38, 38, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            animation: slideDown 0.5s ease;
+        }
+        .fraud-banner.show {
+            display: flex;
+        }
+        .fraud-banner i {
+            font-size: 28px;
+        }
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* ===== MODAL OVERLAY ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: linear-gradient(145deg, #1a1c3a, #2d1b4e);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 560px;
+            width: 100%;
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(168, 85, 247, 0.05);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .modal h2 i {
+            color: #a855f7;
+            margin-right: 10px;
+        }
+        .modal .form-group {
+            margin-bottom: 16px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 4px;
+        }
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+        .modal .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .modal .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .modal .modal-actions .btn {
+            padding: 10px 24px;
+        }
+        .modal .modal-actions .btn-cancel {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .modal .modal-actions .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .stats-grid-dash { grid-template-columns: repeat(2, 1fr); }
+            .charts-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 820px) {
+            .login-container { grid-template-columns: 1fr; gap: 30px; padding: 30px 25px; }
+            .left-panel { padding-right: 0; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .stats-grid-dash { grid-template-columns: 1fr 1fr; }
+            .top-nav { flex-direction: column; align-items: stretch; padding: 16px; }
+            .top-nav .nav-right { justify-content: space-between; }
+        }
+        @media (max-width: 600px) {
+            .login-container { padding: 20px 15px; }
+            .brand h1 { font-size: 22px; }
+            .stats-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+            .stat-card .number { font-size: 22px; }
+            .right-panel { padding: 20px 15px; }
+            .stats-grid-dash { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .stat-card-dash .stat-number { font-size: 22px; }
+            .quick-actions { grid-template-columns: 1fr 1fr; }
+            .section-header { flex-direction: column; align-items: stretch; }
+            .search-bar { flex-direction: column; }
+            .search-bar input, .search-bar select { width: 100%; min-width: unset; }
+            .register-modal .modal-content { padding: 25px; margin: 15px; }
+            .modal { padding: 20px; margin: 15px; }
+            .fraud-banner { font-size: 13px; padding: 12px 20px; top: 10px; }
+            .fraud-banner i { font-size: 20px; }
+        }
+        @media (max-width: 400px) {
+            .stats-grid-dash { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.5); }
+    </style>
+</head>
+<body>
+
+    <!-- ===== PARTICLES ===== -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ===== FRAUD BANNER ===== -->
+    <div class="fraud-banner" id="fraudBanner">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="fraudBannerMsg">🚨 FRAUD DETECTED!</span>
+        <button onclick="closeFraudBanner()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;margin-left:auto;">&times;</button>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- 1. ADMIN LOGIN PAGE                                          -->
+    <!-- ============================================================ -->
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="left-panel">
+                <div class="brand">
+                    <div class="logo">
+                        <i class="fas fa-shield-halved"></i>
+                        <h1>Fraud <span>Detection</span></h1>
+                    </div>
+                    <div class="subtitle">FINANCIAL TRANSACTION SECURITY</div>
+                    <p class="tagline">Complete fraud detection suite with customer, account, transaction management, real‑time alerts, reports, and testing.</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="quickAddUser()">
+                        <div class="number green" id="loginTotalUsers">0</div>
+                        <div class="label">TOTAL USERS</div>
+                        <div class="trend"><i class="fas fa-arrow-up"></i> <span id="loginUserGrowth">+0%</span></div>
+                    </div>
+                    <div class="stat-card" onclick="quickDetectFraud()">
+                        <div class="number" id="loginFraudAlerts">0</div>
+                        <div class="label">FRAUD ALERTS</div>
+                        <div class="trend" id="loginFraudTrend"><i class="fas fa-shield"></i> Secure</div>
+                    </div>
+                    <div class="stat-card" onclick="quickAddReport()">
+                        <div class="number orange" id="loginPendingReports">0</div>
+                        <div class="label">PENDING REPORTS</div>
+                        <div class="trend warning" id="loginReportStatus"><i class="fas fa-clock"></i> Awaiting</div>
+                    </div>
+                </div>
+                <div class="footer">© 2026 Fraud Detection System — Full Suite v2.0</div>
+            </div>
+            <div class="right-panel">
+                <div class="welcome">
+                    <h2>WELCOME BACK</h2>
+                    <p>Login to your admin dashboard</p>
+                </div>
+                <form id="loginForm" onsubmit="return handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password" required />
+                    </div>
+                    <div class="form-options">
+                        <label class="remember"><input type="checkbox" checked /> Remember me</label>
+                        <a href="#" class="forgot-link" onclick="alert('🔐 Password reset link sent.')">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="login-btn"><i class="fas fa-shield-halved" style="margin-right:10px;"></i> Login</button>
+                </form>
+                <div class="register-link">Don't have an account? <a id="registerBtn">Register here</a></div>
+                <div class="bottom-bar">
+                    <div class="weather-widget">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span>27°C · Mostly cloudy</span>
+                    </div>
+                    <div class="windows-activation">
+                        <p><i class="fas fa-windows"></i> Activate Windows</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. REGISTRATION MODAL                                        -->
+    <!-- ============================================================ -->
+    <div class="register-modal" id="registerModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-plus" style="color:#a855f7;margin-right:10px;"></i>Create Account</h2>
+            <p class="sub-text">Register to access the fraud detection dashboard</p>
+            <form id="registerForm" onsubmit="return handleRegister(event)">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" placeholder="John Doe" required />
+                    <div class="error-text" id="regNameError">Please enter your full name</div>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" placeholder="user@gmail.com" required />
+                    <div class="error-text" id="regEmailError">Please enter a valid email address</div>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Phone Number</label>
+                    <input type="tel" id="regPhone" placeholder="017XXXXXXXX" required />
+                    <div class="error-text" id="regPhoneError">Must be 11 digits starting with 013-019</div>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="Min 6 characters with letters and numbers" required />
+                    <div class="error-text" id="regPasswordError">Password must be at least 6 characters with letters and numbers</div>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required />
+                    <div class="error-text" id="regConfirmError">Passwords do not match</div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeRegisterModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. DASHBOARD                                                -->
+    <!-- ============================================================ -->
+    <div id="dashboardPage">
+
+        <!-- Top Nav -->
+        <nav class="top-nav">
+            <div class="brand">
+                <i class="fas fa-shield-halved"></i>
+                <h2>Fraud <span>Detection</span></h2>
+            </div>
+            <div class="nav-right">
+                <div class="user-info">
+                    <div class="avatar" id="dashAvatar">A</div>
+                    <span class="name" id="dashUserName">admin@fraud.com</span>
+                </div>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-grid">
+            <!-- Sidebar Navigation -->
+            <div class="sidebar" id="mainSidebar">
+                <div class="menu-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></div>
+                <div class="menu-item" data-page="customers"><i class="fas fa-users"></i><span>Customers</span></div>
+                <div class="menu-item" data-page="accounts"><i class="fas fa-university"></i><span>Accounts</span></div>
+                <div class="menu-item" data-page="transactions"><i class="fas fa-exchange-alt"></i><span>Transactions</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" data-page="fraud-detection"><i class="fas fa-robot"></i><span>Fraud Detection</span></div>
+                <div class="menu-item" data-page="fraud-alerts"><i class="fas fa-exclamation-triangle"></i><span>Fraud Alerts</span><span class="menu-badge" id="alertBadge">0</span></div>
+                <div class="menu-item" data-page="reports"><i class="fas fa-file-alt"></i><span>Reports</span></div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" data-page="testing"><i class="fas fa-vial"></i><span>Testing</span></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+
+                <!-- ===== DASHBOARD ===== -->
+                <div class="page-section active" id="page-dashboard">
+                    <div class="stats-grid-dash" id="dashStats">
+                        <div class="stat-card-dash"><div class="stat-icon green"><i class="fas fa-users"></i></div><div class="stat-number" id="dashTotalUsers">0</div><div class="stat-label">Total Customers</div><div class="stat-change up"><i class="fas fa-arrow-up"></i> <span id="dashUserGrowth">+0%</span></div></div>
+                        <div class="stat-card-dash"><div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-number" id="dashFraudAlerts">0</div><div class="stat-label">Fraud Alerts</div><div class="stat-change" id="dashFraudStatus"><i class="fas fa-shield"></i> Secure</div></div>
+                        <div class="stat-card-dash"><div class="stat-icon orange"><i class="fas fa-clock"></i></div><div class="stat-number" id="dashPendingReports">0</div><div class="stat-label">Pending Reports</div><div class="stat-change" id="dashReportStatus"><i class="fas fa-clock"></i> Awaiting</div></div>
+                        <div class="stat-card-dash"><div class="stat-icon blue"><i class="fas fa-check-circle"></i></div><div class="stat-number" id="dashResolved">0</div><div class="stat-label">Resolved</div><div class="stat-change"><i class="fas fa-check"></i> Completed</div></div>
+                    </div>
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <div class="chart-header"><h3>Fraud Activity (Last 7 Days)</h3><span class="badge"><i class="fas fa-calendar"></i> Weekly</span></div>
+                            <div class="bar-chart" id="weeklyChart">
+                                <div class="bar-item"><div class="bar" style="height:20px;"></div><span class="bar-label">Mon</span></div>
+                                <div class="bar-item"><div class="bar" style="height:40px;"></div><span class="bar-label">Tue</span></div>
+                                <div class="bar-item"><div class="bar" style="height:15px;"></div><span class="bar-label">Wed</span></div>
+                                <div class="bar-item"><div class="bar" style="height:60px;"></div><span class="bar-label">Thu</span></div>
+                                <div class="bar-item"><div class="bar" style="height:35px;"></div><span class="bar-label">Fri</span></div>
+                                <div class="bar-item"><div class="bar" style="height:80px;"></div><span class="bar-label">Sat</span></div>
+                                <div class="bar-item"><div class="bar" style="height:45px;"></div><span class="bar-label">Sun</span></div>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header"><h3>Quick Actions</h3><span class="badge"><i class="fas fa-bolt"></i> Shortcuts</span></div>
+                            <div class="quick-actions">
+                                <button class="quick-action-btn danger" onclick="quickDetectFraud()"><i class="fas fa-exclamation-triangle"></i> Detect Fraud</button>
+                                <button class="quick-action-btn warning" onclick="quickAddReport()"><i class="fas fa-plus-circle"></i> Add Report</button>
+                                <button class="quick-action-btn success" onclick="quickAddUser()"><i class="fas fa-user-plus"></i> Add User</button>
+                                <button class="quick-action-btn info" onclick="refreshAll()"><i class="fas fa-sync"></i> Refresh</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header"><h3>Recent Activity</h3><span class="badge"><i class="fas fa-clock"></i> Live</span></div>
+                        <div class="activity-list" id="dashActivityList"></div>
+                    </div>
+                </div>
+
+                <!-- ===== CUSTOMER MANAGEMENT ===== -->
+                <div class="page-section" id="page-customers">
+                    <div class="section-header">
+                        <h2><i class="fas fa-users"></i> Customer Management</h2>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="openModal('customer')"><i class="fas fa-plus"></i> Add Customer</button>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="customerSearch" placeholder="🔍 Search customers..." oninput="renderCustomers()" />
+                        <select id="customerFilter" onchange="renderCustomers()"><option value="all">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+                    </div>
+                    <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div>
+                </div>
+
+                <!-- ===== ACCOUNT MANAGEMENT ===== -->
+                <div class="page-section" id="page-accounts">
+                    <div class="section-header">
+                        <h2><i class="fas fa-university"></i> Account Management</h2>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="openModal('account')"><i class="fas fa-plus"></i> Add Account</button>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="accountSearch" placeholder="🔍 Search accounts..." oninput="renderAccounts()" />
+                        <select id="accountFilter" onchange="renderAccounts()"><option value="all">All Types</option><option value="savings">Savings</option><option value="checking">Checking</option><option value="business">Business</option></select>
+                    </div>
+                    <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Customer</th><th>Account #</th><th>Type</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody id="accountTableBody"></tbody></table></div></div>
+                </div>
+
+                <!-- ===== TRANSACTION MANAGEMENT ===== -->
+                <div class="page-section" id="page-transactions">
+                    <div class="section-header">
+                        <h2><i class="fas fa-exchange-alt"></i> Transaction Management</h2>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="openModal('transaction')"><i class="fas fa-plus"></i> Add Transaction</button>
+                            <button class="btn btn-warning" onclick="runFraudDetection()"><i class="fas fa-robot"></i> Run Fraud Scan</button>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="transactionSearch" placeholder="🔍 Search transactions..." oninput="renderTransactions()" />
+                        <select id="transactionFilter" onchange="renderTransactions()"><option value="all">All Status</option><option value="pending">Pending</option><option value="completed">Completed</option><option value="flagged">Flagged</option></select>
+                    </div>
+                    <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Account</th><th>Type</th><th>Amount</th><th>Status</th><th>Location</th><th>Time</th><th>Actions</th></tr></thead><tbody id="transactionTableBody"></tbody></table></div></div>
+                </div>
+
+                <!-- ===== FRAUD DETECTION MODULE ===== -->
+                <div class="page-section" id="page-fraud-detection">
+                    <div class="section-header">
+                        <h2><i class="fas fa-robot"></i> Fraud Detection Module</h2>
+                        <div class="actions">
+                            <button class="btn btn-danger" onclick="runFraudDetection()"><i class="fas fa-scan"></i> Run Full Scan</button>
+                            <button class="btn btn-warning" onclick="quickDetectFraud()"><i class="fas fa-bolt"></i> Quick Test</button>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-bottom:20px;">
+                        <div class="card-header"><h3>Detection Rules</h3><span class="badge">Active</span></div>
+                        <div id="detectionRules" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div style="background:rgba(168,85,247,0.08);padding:14px;border-radius:12px;border-left:3px solid #a855f7;"><strong>🚨 High Amount</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.5);">Amount &gt; $10,000 triggers alert</span></div>
+                            <div style="background:rgba(168,85,247,0.08);padding:14px;border-radius:12px;border-left:3px solid #a855f7;"><strong>⚠️ Multiple Transfers</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.5);">&gt; 5 transfers in 1 hour</span></div>
+                            <div style="background:rgba(168,85,247,0.08);padding:14px;border-radius:12px;border-left:3px solid #a855f7;"><strong>📍 Location Anomaly</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.5);">Transaction from high-risk country</span></div>
+                            <div style="background:rgba(168,85,247,0.08);padding:14px;border-radius:12px;border-left:3px solid #a855f7;"><strong>🔁 Rapid Succession</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.5);">&gt; 3 transactions in 5 minutes</span></div>
+                        </div>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>Scan Results</h3><span class="badge" id="scanCount">0 scans</span></div>
+                        <div id="scanResults"><div class="empty-state"><i class="fas fa-microchip"></i> No scans run yet. Click "Run Full Scan" to begin.</div></div>
+                    </div>
+                </div>
+
+                <!-- ===== FRAUD ALERT MODULE ===== -->
+                <div class="page-section" id="page-fraud-alerts">
+                    <div class="section-header">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Fraud Alert Module</h2>
+                        <div class="actions">
+                            <button class="btn btn-danger" onclick="quickDetectFraud()"><i class="fas fa-plus"></i> Generate Alert</button>
+                            <button class="btn btn-success" onclick="resolveAllAlerts()"><i class="fas fa-check-double"></i> Resolve All</button>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="alertSearch" placeholder="🔍 Search alerts..." oninput="renderAlerts()" />
+                        <select id="alertFilter" onchange="renderAlerts()"><option value="all">All Severity</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+                    </div>
+                    <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Severity</th><th>Description</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead><tbody id="alertTableBody"></tbody></table></div></div>
+                </div>
+
+                <!-- ===== REPORTS ===== -->
+                <div class="page-section" id="page-reports">
+                    <div class="section-header">
+                        <h2><i class="fas fa-file-alt"></i> Reports</h2>
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="generateReport()"><i class="fas fa-plus"></i> Generate Report</button>
+                            <button class="btn btn-info" onclick="exportReport()"><i class="fas fa-download"></i> Export CSV</button>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="reportSearch" placeholder="🔍 Search reports..." oninput="renderReports()" />
+                    </div>
+                    <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Title</th><th>Type</th><th>Status</th><th>Generated</th><th>Actions</th></tr></thead><tbody id="reportTableBody"></tbody></table></div></div>
+                </div>
+
+                <!-- ===== TESTING ===== -->
+                <div class="page-section" id="page-testing">
+                    <div class="section-header">
+                        <h2><i class="fas fa-vial"></i> Testing Module</h2>
+                        <div class="actions">
+                            <button class="btn btn-success" onclick="runAllTests()"><i class="fas fa-play"></i> Run All Tests</button>
+                            <button class="btn btn-outline" onclick="resetTestData()"><i class="fas fa-undo"></i> Reset Data</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Test Suite</h3><span class="badge" id="testStatus">Ready</span></div>
+                        <div id="testResults" style="font-family:monospace;font-size:13px;line-height:1.8;">
+                            <div style="color:rgba(255,255,255,0.3);padding:20px;text-align:center;">Click "Run All Tests" to execute the test suite.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /main-content -->
+        </div><!-- /dashboard-grid -->
+    </div><!-- /dashboardPage -->
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Add New</h2>
+            <div id="modalBody"></div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="modalSubmitBtn" onclick="submitModal()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'backend/';
+
+        // ============================================================
+        // PARTICLES BACKGROUND
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                particle.style.animationDelay = (Math.random() * 15) + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                particlesContainer.appendChild(particle);
+            }
+        });
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const icons = { danger: 'fa-exclamation-circle', success: 'fa-check-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; setTimeout(() => toast.remove(), 500); }, 3500);
+        }
+
+        // ============================================================
+        // FRAUD BANNER
+        // ============================================================
+        function showFraudBanner(msg) {
+            const banner = document.getElementById('fraudBanner');
+            document.getElementById('fraudBannerMsg').textContent = '🚨 ' + msg;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 8000);
+        }
+        function closeFraudBanner() { document.getElementById('fraudBanner').classList.remove('show'); }
+
+        // ============================================================
+        // VALIDATION FUNCTIONS
+        // ============================================================
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        function validatePhone(phone) {
+            return /^01[3-9][0-9]{8}$/.test(phone);
+        }
+        function validatePassword(password) {
+            return password.length >= 6 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
+        }
+
+        // ============================================================
+        // API HELPER
+        // ============================================================
+        async function apiRequest(endpoint, method = 'GET', data = null) {
+            const options = { method: method, headers: { 'Content-Type': 'application/json' } };
+            if (data) options.body = JSON.stringify(data);
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                showToast('Network error. Please try again.', 'danger');
+                return { error: error.message };
+            }
+        }
+
+        // ============================================================
+        // REGISTRATION MODAL
+        // ============================================================
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.add('show');
+            document.querySelectorAll('#registerForm .error-text').forEach(el => el.classList.remove('show'));
+        }
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.remove('show');
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            document.querySelectorAll('#registerForm .error-text').forEach(el => el.classList.remove('show'));
+
+            let hasError = false;
+
+            if (!name || name.length < 2) {
+                document.getElementById('regNameError').classList.add('show');
+                hasError = true;
+            }
+
+            if (!validateEmail(email)) {
+                document.getElementById('regEmailError').classList.add('show');
+                hasError = true;
+            }
+
+            if (!validatePhone(phone)) {
+                document.getElementById('regPhoneError').classList.add('show');
+                hasError = true;
+            }
+
+            if (!validatePassword(password)) {
+                document.getElementById('regPasswordError').classList.add('show');
+                hasError = true;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('regConfirmError').classList.add('show');
+                hasError = true;
+            }
+
+            if (hasError) {
+                showToast('Please fix the errors in the form.', 'danger');
+                return false;
+            }
+
+            const result = await apiRequest('register.php', 'POST', { email, password, name, phone });
+
+            if (result && result.success) {
+                showToast('✅ Registration successful! You can now login.', 'success');
+                closeRegisterModal();
+                document.getElementById('email').value = email;
+            } else {
+                showToast(result?.error || '❌ Registration failed. Please try again.', 'danger');
+            }
+            return false;
+        }
+
+        document.getElementById('registerBtn').addEventListener('click', openRegisterModal);
+        document.getElementById('registerModal').addEventListener('click', function(e) {
+            if (e.target === this) closeRegisterModal();
+        });
+
+        // ============================================================
+        // LOGIN
+        // ============================================================
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                showToast('Please enter both email and password.', 'danger');
+                return false;
+            }
+
+            if (!validateEmail(email)) {
+                showToast('Please enter a valid email address.', 'danger');
+                return false;
+            }
+
+            const result = await apiRequest('login.php', 'POST', { email, password });
+            if (result && result.success) {
+                sessionStorage.setItem('fraudLoggedInUser', JSON.stringify(result.user));
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboardPage').style.display = 'block';
+                document.getElementById('dashUserName').textContent = result.user.email;
+                document.getElementById('dashAvatar').textContent = (result.user.name || result.user.email).charAt(0).toUpperCase();
+                showToast('✅ Welcome back, ' + (result.user.name || result.user.email) + '!', 'success');
+                refreshAll();
+                return false;
+            } else {
+                showToast(result?.error || '❌ Invalid email or password.', 'danger');
+                return false;
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('fraudLoggedInUser');
+                document.getElementById('dashboardPage').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'flex';
+                showToast('👋 Logged out.', 'info');
+            }
+        }
+
+        // ============================================================
+        // MODAL
+        // ============================================================
+        let modalType = 'customer';
+        let modalEditId = null;
+
+        function openModal(type, editData = null) {
+            modalType = type;
+            modalEditId = editData ? editData.id : null;
+            const overlay = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+            const title = document.getElementById('modalTitle');
+            let html = '';
+
+            if (type === 'customer') {
+                title.innerHTML = '<i class="fas fa-user-plus"></i> ' + (editData ? 'Edit Customer' : 'Add Customer');
+                html = `
+                    <div class="form-group"><label>Full Name</label><input id="mName" value="${editData ? editData.name : ''}" placeholder="John Doe" required /></div>
+                    <div class="form-group"><label>Email</label><input id="mEmail" type="email" value="${editData ? editData.email : ''}" placeholder="john@email.com" required /></div>
+                    <div class="form-group"><label>Phone (01[3-9]XXXXXXXX)</label><input id="mPhone" value="${editData ? editData.phone : ''}" placeholder="017XXXXXXXX" required /></div>
+                    <div class="form-group"><label>Address</label><input id="mAddress" value="${editData ? editData.address : ''}" placeholder="123 Main St" /></div>
+                    <div class="form-group"><label>Location</label><input id="mLocation" value="${editData ? editData.location : ''}" placeholder="Dhaka, Bangladesh" required /></div>
+                    <div class="form-group"><label>Status</label><select id="mStatus"><option value="active" ${editData && editData.status === 'active' ? 'selected' : ''}>Active</option><option value="inactive" ${editData && editData.status === 'inactive' ? 'selected' : ''}>Inactive</option></select></div>
+                `;
+            } else if (type === 'account') {
+                title.innerHTML = '<i class="fas fa-university"></i> ' + (editData ? 'Edit Account' : 'Add Account');
+                html = `
+                    <div class="form-group"><label>Customer</label><select id="mCustomer"></select></div>
+                    <div class="form-group"><label>Account Number</label><input id="mAccountNum" value="${editData ? editData.account_number : 'ACC-' + Date.now().toString().slice(-6)}" required /></div>
+                    <div class="form-group"><label>Type</label><select id="mType"><option value="savings" ${editData && editData.type === 'savings' ? 'selected' : ''}>Savings</option><option value="checking" ${editData && editData.type === 'checking' ? 'selected' : ''}>Checking</option><option value="business" ${editData && editData.type === 'business' ? 'selected' : ''}>Business</option></select></div>
+                    <div class="form-group"><label>Balance</label><input id="mBalance" type="number" step="0.01" value="${editData ? editData.balance : 0}" /></div>
+                    <div class="form-group"><label>Status</label><select id="mStatus"><option value="active" ${editData && editData.status === 'active' ? 'selected' : ''}>Active</option><option value="inactive" ${editData && editData.status === 'inactive' ? 'selected' : ''}>Inactive</option></select></div>
+                `;
+                setTimeout(() => fetchCustomersForDropdown(editData).then(opts => { const sel = document.getElementById('mCustomer'); if (sel) sel.innerHTML = opts; }), 100);
+            } else if (type === 'transaction') {
+                title.innerHTML = '<i class="fas fa-exchange-alt"></i> ' + (editData ? 'Edit Transaction' : 'Add Transaction');
+                html = `
+                    <div class="form-group"><label>Account</label><select id="mAccount"></select></div>
+                    <div class="form-group"><label>Type</label><select id="mType"><option value="deposit" ${editData && editData.type === 'deposit' ? 'selected' : ''}>Deposit</option><option value="withdrawal" ${editData && editData.type === 'withdrawal' ? 'selected' : ''}>Withdrawal</option><option value="transfer" ${editData && editData.type === 'transfer' ? 'selected' : ''}>Transfer</option></select></div>
+                    <div class="form-group"><label>Amount</label><input id="mAmount" type="number" step="0.01" value="${editData ? editData.amount : 0}" required /></div>
+                    <div class="form-group"><label>Description</label><input id="mDesc" value="${editData ? editData.description : ''}" placeholder="Transaction description" /></div>
+                    <div class="form-group"><label>Location</label><input id="mLocation" value="${editData ? editData.location : ''}" placeholder="Dhaka, Bangladesh" required /></div>
+                    <div class="form-group"><label>Status</label><select id="mStatus"><option value="pending" ${editData && editData.status === 'pending' ? 'selected' : ''}>Pending</option><option value="completed" ${editData && editData.status === 'completed' ? 'selected' : ''}>Completed</option><option value="flagged" ${editData && editData.status === 'flagged' ? 'selected' : ''}>Flagged</option></select></div>
+                `;
+                setTimeout(() => fetchAccountsForDropdown(editData).then(opts => { const sel = document.getElementById('mAccount'); if (sel) sel.innerHTML = opts; }), 100);
+            } else if (type === 'report') {
+                title.innerHTML = '<i class="fas fa-file-alt"></i> ' + (editData ? 'Edit Report' : 'Generate Report');
+                html = `
+                    <div class="form-group"><label>Title</label><input id="mTitle" value="${editData ? editData.title : ''}" placeholder="Report title" required /></div>
+                    <div class="form-group"><label>Type</label><select id="mType"><option value="summary" ${editData && editData.type === 'summary' ? 'selected' : ''}>Summary</option><option value="detailed" ${editData && editData.type === 'detailed' ? 'selected' : ''}>Detailed</option><option value="custom" ${editData && editData.type === 'custom' ? 'selected' : ''}>Custom</option></select></div>
+                    <div class="form-group"><label>Description</label><textarea id="mDesc">${editData ? editData.description : ''}</textarea></div>
+                `;
+            }
+
+            body.innerHTML = html;
+            overlay.classList.add('show');
+        }
+
+        async function fetchCustomersForDropdown(editData) {
+            const result = await apiRequest('customers.php');
+            let opts = '';
+            if (result && !result.error) {
+                result.forEach(c => {
+                    const selected = editData && editData.customer_id === c.id ? 'selected' : '';
+                    opts += `<option value="${c.id}" ${selected}>${c.name}</option>`;
+                });
+            }
+            return opts || '<option value="">No customers found</option>';
+        }
+
+        async function fetchAccountsForDropdown(editData) {
+            const result = await apiRequest('accounts.php');
+            let opts = '';
+            if (result && !result.error) {
+                result.forEach(a => {
+                    const selected = editData && editData.account_id === a.id ? 'selected' : '';
+                    opts += `<option value="${a.id}" ${selected}>${a.account_number} (${a.customer_name || 'Unknown'})</option>`;
+                });
+            }
+            return opts || '<option value="">No accounts found</option>';
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); modalEditId = null; }
+
+        async function submitModal() {
+            const type = modalType;
+
+            if (type === 'customer') {
+                const name = document.getElementById('mName').value.trim();
+                const email = document.getElementById('mEmail').value.trim();
+                const phone = document.getElementById('mPhone').value.trim();
+                const address = document.getElementById('mAddress').value.trim();
+                const location = document.getElementById('mLocation').value.trim();
+                const status = document.getElementById('mStatus').value;
+                
+                if (!name || !email || !phone) {
+                    showToast('Name, email and phone are required.', 'danger');
+                    return;
+                }
+                if (!validateEmail(email)) {
+                    showToast('Invalid email format. Please use a valid email like user@gmail.com', 'danger');
+                    return;
+                }
+                if (!validatePhone(phone)) {
+                    showToast('Invalid phone number. Must be 11 digits starting with 013-019', 'danger');
+                    return;
+                }
+                if (!location) {
+                    showToast('Location is required.', 'danger');
+                    return;
+                }
+
+                const data = { name, email, phone, address, location, status };
+                if (modalEditId) {
+                    const result = await apiRequest(`customers.php?id=${modalEditId}`, 'PUT', data);
+                    if (result && result.success) { showToast('Customer updated.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to update customer.', 'danger');
+                } else {
+                    const result = await apiRequest('customers.php', 'POST', data);
+                    if (result && result.success) { showToast('Customer added.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to add customer.', 'danger');
+                }
+            } else if (type === 'account') {
+                const customer_id = parseInt(document.getElementById('mCustomer').value);
+                const account_number = document.getElementById('mAccountNum').value.trim();
+                const typeVal = document.getElementById('mType').value;
+                const balance = parseFloat(document.getElementById('mBalance').value) || 0;
+                const status = document.getElementById('mStatus').value;
+                if (!account_number) { showToast('Account number is required.', 'danger'); return; }
+
+                const data = { customer_id, account_number, type: typeVal, balance, status };
+                if (modalEditId) {
+                    const result = await apiRequest(`accounts.php?id=${modalEditId}`, 'PUT', data);
+                    if (result && result.success) { showToast('Account updated.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to update account.', 'danger');
+                } else {
+                    const result = await apiRequest('accounts.php', 'POST', data);
+                    if (result && result.success) { showToast('Account added.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to add account.', 'danger');
+                }
+            } else if (type === 'transaction') {
+                const account_id = parseInt(document.getElementById('mAccount').value);
+                const typeVal = document.getElementById('mType').value;
+                const amount = parseFloat(document.getElementById('mAmount').value) || 0;
+                const description = document.getElementById('mDesc').value.trim();
+                const location = document.getElementById('mLocation').value.trim();
+                const status = document.getElementById('mStatus').value;
+                if (!account_id || amount <= 0) { showToast('Valid account and amount required.', 'danger'); return; }
+                if (!location) { showToast('Location is required.', 'danger'); return; }
+
+                const data = { account_id, type: typeVal, amount, description, location, status, ip_address: '192.168.1.' + Math.floor(Math.random() * 255), device_id: 'DEV-' + String(Math.floor(Math.random() * 900) + 100) };
+                if (modalEditId) {
+                    const result = await apiRequest(`transactions.php?id=${modalEditId}`, 'PUT', data);
+                    if (result && result.success) { showToast('Transaction updated.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to update transaction.', 'danger');
+                } else {
+                    const result = await apiRequest('transactions.php', 'POST', data);
+                    if (result && result.success) { showToast('Transaction added.', 'success'); closeModal(); refreshAll(); runFraudDetection(); }
+                    else showToast('Failed to add transaction.', 'danger');
+                }
+            } else if (type === 'report') {
+                const title = document.getElementById('mTitle').value.trim();
+                const typeVal = document.getElementById('mType').value;
+                const desc = document.getElementById('mDesc').value.trim();
+                if (!title) { showToast('Title is required.', 'danger'); return; }
+
+                const data = { title, type: typeVal, description: desc };
+                if (modalEditId) {
+                    const result = await apiRequest(`reports.php?id=${modalEditId}`, 'PUT', data);
+                    if (result && result.success) { showToast('Report updated.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to update report.', 'danger');
+                } else {
+                    const result = await apiRequest('reports.php', 'POST', data);
+                    if (result && result.success) { showToast('Report generated.', 'success'); closeModal(); refreshAll(); }
+                    else showToast('Failed to generate report.', 'danger');
+                }
+            }
+        }
+
+        // ============================================================
+        // RENDER FUNCTIONS
+        // ============================================================
+        async function renderCustomers() {
+            const search = document.getElementById('customerSearch').value;
+            const filter = document.getElementById('customerFilter').value;
+            let url = 'customers.php?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (filter !== 'all') url += `status=${filter}&`;
+            const result = await apiRequest(url);
+            const tbody = document.getElementById('customerTableBody');
+            if (!result || result.error || result.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;">No customers found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = result.map(c => `
+                <tr>
+                    <td>#${c.id}</td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.email}</td>
+                    <td>${c.phone || 'N/A'}</td>
+                    <td><span class="status-badge ${c.status === 'active' ? 'active' : 'inactive'}">${c.status}</span></td>
+                    <td>${c.created_at ? c.created_at.slice(0,10) : 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="editCustomer(${c.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${c.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderAccounts() {
+            const search = document.getElementById('accountSearch').value;
+            const filter = document.getElementById('accountFilter').value;
+            let url = 'accounts.php?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (filter !== 'all') url += `type=${filter}&`;
+            const result = await apiRequest(url);
+            const tbody = document.getElementById('accountTableBody');
+            if (!result || result.error || result.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;">No accounts found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = result.map(a => `
+                <tr>
+                    <td>#${a.id}</td>
+                    <td>${a.customer_name || 'Unknown'}</td>
+                    <td><strong>${a.account_number}</strong></td>
+                    <td><span class="status-badge ${a.type}">${a.type}</span></td>
+                    <td>$${parseFloat(a.balance).toFixed(2)}</td>
+                    <td><span class="status-badge ${a.status === 'active' ? 'active' : 'inactive'}">${a.status}</span></td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="editAccount(${a.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAccount(${a.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderTransactions() {
+            const search = document.getElementById('transactionSearch').value;
+            const filter = document.getElementById('transactionFilter').value;
+            let url = 'transactions.php?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (filter !== 'all') url += `status=${filter}&`;
+            const result = await apiRequest(url);
+            const tbody = document.getElementById('transactionTableBody');
+            if (!result || result.error || result.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;">No transactions found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = result.map(t => `
+                <tr>
+                    <td>#${t.id}</td>
+                    <td>${t.account_number || 'N/A'}</td>
+                    <td><span class="status-badge ${t.type}">${t.type}</span></td>
+                    <td><strong>$${parseFloat(t.amount).toFixed(2)}</strong></td>
+                    <td><span class="status-badge ${t.status === 'flagged' ? 'fraud' : t.status}">${t.status}</span></td>
+                    <td>${t.location || 'N/A'}</td>
+                    <td style="font-size:12px;color:rgba(255,255,255,0.5);">${t.created_at ? t.created_at.replace('T', ' ').slice(0,16) : 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="editTransaction(${t.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${t.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderAlerts() {
+            const search = document.getElementById('alertSearch').value;
+            const filter = document.getElementById('alertFilter').value;
+            let url = 'fraud_alerts.php?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            if (filter !== 'all') url += `severity=${filter}&`;
+            const result = await apiRequest(url);
+            const tbody = document.getElementById('alertTableBody');
+            if (!result || result.error || result.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;">No fraud alerts found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = result.map(a => `
+                <tr>
+                    <td>#${a.id}</td>
+                    <td><strong>${a.type}</strong></td>
+                    <td><span class="status-badge ${a.severity}">${a.severity}</span></td>
+                    <td>${a.description}</td>
+                    <td><span class="status-badge ${a.status === 'resolved' ? 'active' : 'pending'}">${a.status}</span></td>
+                    <td style="font-size:12px;color:rgba(255,255,255,0.5);">${a.created_at ? a.created_at.replace('T', ' ').slice(0,16) : 'N/A'}</td>
+                    <td>
+                        ${a.status !== 'resolved' ? `<button class="btn btn-success btn-sm" onclick="resolveAlert(${a.id})"><i class="fas fa-check"></i></button>` : ''}
+                        <button class="btn btn-danger btn-sm" onclick="deleteAlert(${a.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            const pending = result.filter(a => a.status === 'pending').length;
+            document.getElementById('alertBadge').textContent = pending;
+        }
+
+        async function renderReports() {
+            const search = document.getElementById('reportSearch').value;
+            let url = 'reports.php?';
+            if (search) url += `search=${encodeURIComponent(search)}&`;
+            const result = await apiRequest(url);
+            const tbody = document.getElementById('reportTableBody');
+            if (!result || result.error || result.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;">No reports found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = result.map(r => `
+                <tr>
+                    <td>#${r.id}</td>
+                    <td><strong>${r.title}</strong></td>
+                    <td><span class="status-badge ${r.type}">${r.type}</span></td>
+                    <td><span class="status-badge ${r.status === 'generated' ? 'active' : 'pending'}">${r.status}</span></td>
+                    <td style="font-size:12px;color:rgba(255,255,255,0.5);">${r.generated_at ? r.generated_at.replace('T', ' ').slice(0,16) : 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="editReport(${r.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteReport(${r.id})"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-success btn-sm" onclick="downloadReport(${r.id})"><i class="fas fa-download"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderDashboard() {
+            const result = await apiRequest('dashboard.php');
+            if (result && !result.error) {
+                document.getElementById('dashTotalUsers').textContent = result.totalCustomers || 0;
+                document.getElementById('dashFraudAlerts').textContent = result.fraudAlerts || 0;
+                document.getElementById('dashPendingReports').textContent = result.pendingReports || 0;
+                document.getElementById('dashResolved').textContent = result.resolvedAlerts || 0;
+
+                document.getElementById('loginTotalUsers').textContent = result.totalCustomers || 0;
+                document.getElementById('loginFraudAlerts').textContent = result.fraudAlerts || 0;
+                document.getElementById('loginPendingReports').textContent = result.pendingReports || 0;
+
+                const fraudStatus = document.getElementById('dashFraudStatus');
+                if (result.fraudAlerts > 0) {
+                    fraudStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${result.fraudAlerts} Alert(s)`;
+                    fraudStatus.className = 'stat-change down';
+                    document.getElementById('loginFraudTrend').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${result.fraudAlerts} Alert(s)`;
+                } else {
+                    fraudStatus.innerHTML = `<i class="fas fa-shield"></i> Secure`;
+                    fraudStatus.className = 'stat-change up';
+                    document.getElementById('loginFraudTrend').innerHTML = `<i class="fas fa-shield"></i> Secure`;
+                }
+
+                const pending = result.pendingReports || 0;
+                const reportStatus = document.getElementById('dashReportStatus');
+                if (pending > 5) {
+                    reportStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Critical`;
+                    reportStatus.className = 'stat-change down';
+                    document.getElementById('loginReportStatus').innerHTML = `<i class="fas fa-exclamation-triangle"></i> High`;
+                } else if (pending > 2) {
+                    reportStatus.innerHTML = `<i class="fas fa-clock"></i> Medium`;
+                    reportStatus.className = 'stat-change';
+                    document.getElementById('loginReportStatus').innerHTML = `<i class="fas fa-clock"></i> Medium`;
+                } else {
+                    reportStatus.innerHTML = `<i class="fas fa-check-circle"></i> Low`;
+                    reportStatus.className = 'stat-change up';
+                    document.getElementById('loginReportStatus').innerHTML = `<i class="fas fa-check-circle"></i> Low`;
+                }
+
+                const container = document.getElementById('dashActivityList');
+                if (result.recentActivities && result.recentActivities.length > 0) {
+                    container.innerHTML = result.recentActivities.slice(0, 6).map(act => {
+                        const map = {
+                            fraud: { icon: 'fa-exclamation-triangle', cls: 'red', status: 'detected', label: 'Detected' },
+                            report: { icon: 'fa-file-alt', cls: 'orange', status: 'pending', label: 'Pending' },
+                            user: { icon: 'fa-user-plus', cls: 'green', status: 'resolved', label: 'Added' },
+                            transaction: { icon: 'fa-exchange-alt', cls: 'blue', status: 'resolved', label: 'Processed' }
+                        };
+                        const info = map[act.type] || map.report;
+                        return `
+                            <div class="activity-item ${act.type}">
+                                <div class="activity-icon ${info.cls}"><i class="fas ${info.icon}"></i></div>
+                                <div class="activity-details">
+                                    <div class="title">${act.title}</div>
+                                    <div class="time">${act.created_at ? new Date(act.created_at).toLocaleString() : 'Just now'}</div>
+                                </div>
+                                <span class="activity-status ${info.status}">${info.label}</span>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.2);"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i> No recent activity</div>`;
+                }
+
+                if (result.weeklyFraud) {
+                    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    const bars = document.querySelectorAll('#weeklyChart .bar-item .bar');
+                    const maxVal = Math.max(...result.weeklyFraud, 1);
+                    result.weeklyFraud.forEach((val, idx) => {
+                        if (bars[idx]) {
+                            const height = Math.max(8, (val / maxVal) * 100);
+                            bars[idx].style.height = height + 'px';
+                        }
+                    });
+                }
+            }
+        }
+
+        // ============================================================
+        // CRUD OPERATIONS
+        // ============================================================
+        async function editCustomer(id) {
+            const result = await apiRequest(`customers.php?id=${id}`);
+            if (result && !result.error) openModal('customer', result);
+        }
+
+        async function deleteCustomer(id) {
+            if (!confirm('Delete this customer?')) return;
+            const result = await apiRequest(`customers.php?id=${id}`, 'DELETE');
+            if (result && result.success) { showToast('Customer deleted.', 'warning'); refreshAll(); }
+            else showToast('Failed to delete customer.', 'danger');
+        }
+
+        async function editAccount(id) {
+            const result = await apiRequest(`accounts.php?id=${id}`);
+            if (result && !result.error) openModal('account', result);
+        }
+
+        async function deleteAccount(id) {
+            if (!confirm('Delete this account?')) return;
+            const result = await apiRequest(`accounts.php?id=${id}`, 'DELETE');
+            if (result && result.success) { showToast('Account deleted.', 'warning'); refreshAll(); }
+            else showToast('Failed to delete account.', 'danger');
+        }
+
+        async function editTransaction(id) {
+            const result = await apiRequest(`transactions.php?id=${id}`);
+            if (result && !result.error) openModal('transaction', result);
+        }
+
+        async function deleteTransaction(id) {
+            if (!confirm('Delete this transaction?')) return;
+            const result = await apiRequest(`transactions.php?id=${id}`, 'DELETE');
+            if (result && result.success) { showToast('Transaction deleted.', 'warning'); refreshAll(); }
+            else showToast('Failed to delete transaction.', 'danger');
+        }
+
+        async function resolveAlert(id) {
+            const result = await apiRequest(`fraud_alerts.php?id=${id}`, 'PUT', { status: 'resolved' });
+            if (result && result.success) { showToast('Alert resolved.', 'success'); refreshAll(); }
+            else showToast('Failed to resolve alert.', 'danger');
+        }
+
+        async function deleteAlert(id) {
+            if (!confirm('Delete this alert?')) return;
+            const result = await apiRequest(`fraud_alerts.php?id=${id}`, 'DELETE');
+            if (result && result.success) { showToast('Alert deleted.', 'warning'); refreshAll(); }
+            else showToast('Failed to delete alert.', 'danger');
+        }
+
+        async function resolveAllAlerts() {
+            const result = await apiRequest('fraud_alerts.php');
+            if (result && !result.error) {
+                const pending = result.filter(a => a.status === 'pending');
+                if (pending.length === 0) { showToast('No pending alerts to resolve.', 'info'); return; }
+                let resolved = 0;
+                for (const alert of pending) {
+                    const res = await apiRequest(`fraud_alerts.php?id=${alert.id}`, 'PUT', { status: 'resolved' });
+                    if (res && res.success) resolved++;
+                }
+                showToast(`${resolved} alerts resolved.`, 'success');
+                refreshAll();
+            }
+        }
+
+        async function editReport(id) {
+            const result = await apiRequest(`reports.php?id=${id}`);
+            if (result && !result.error) openModal('report', result);
+        }
+
+        async function deleteReport(id) {
+            if (!confirm('Delete this report?')) return;
+            const result = await apiRequest(`reports.php?id=${id}`, 'DELETE');
+            if (result && result.success) { showToast('Report deleted.', 'warning'); refreshAll(); }
+            else showToast('Failed to delete report.', 'danger');
+        }
+
+        function downloadReport(id) { showToast('Download feature - will fetch from API', 'info'); }
+        function generateReport() { openModal('report'); }
+        function exportReport() { showToast('Export feature - will fetch from API', 'info'); }
+
+        // ============================================================
+        // FRAUD DETECTION ENGINE
+        // ============================================================
+        async function runFraudDetection() {
+            const transactions = await apiRequest('transactions.php');
+            if (!transactions || transactions.error) {
+                showToast('Failed to fetch transactions.', 'danger');
+                return;
+            }
+
+            let newAlerts = 0;
+            const scanResults = [];
+
+            for (const t of transactions) {
+                if (t.amount > 10000 && t.status !== 'flagged') {
+                    const alertData = {
+                        transaction_id: t.id,
+                        type: 'High Amount',
+                        severity: 'high',
+                        description: `Unusual high amount $${parseFloat(t.amount).toFixed(2)} on transaction #${t.id}`,
+                        status: 'pending'
+                    };
+                    const result = await apiRequest('fraud_alerts.php', 'POST', alertData);
+                    if (result && result.success) {
+                        newAlerts++;
+                        scanResults.push(`🚨 High Amount: $${parseFloat(t.amount).toFixed(2)} (Tx #${t.id})`);
+                        await apiRequest(`transactions.php?id=${t.id}`, 'PUT', { ...t, status: 'flagged' });
+                    }
+                }
+            }
+
+            const highRiskLocations = ['Unknown', 'Russia', 'China', 'North Korea', 'Iran'];
+            for (const t of transactions) {
+                if (t.location && highRiskLocations.some(l => t.location.includes(l))) {
+                    const alertData = {
+                        transaction_id: t.id,
+                        type: 'Location Anomaly',
+                        severity: 'high',
+                        description: `Transaction from high-risk location: ${t.location}`,
+                        status: 'pending'
+                    };
+                    const result = await apiRequest('fraud_alerts.php', 'POST', alertData);
+                    if (result && result.success) {
+                        newAlerts++;
+                        scanResults.push(`📍 Location Anomaly: ${t.location} (Tx #${t.id})`);
+                        await apiRequest(`transactions.php?id=${t.id}`, 'PUT', { ...t, status: 'flagged' });
+                    }
+                }
+            }
+
+            if (newAlerts > 0) {
+                showFraudBanner(`Fraud scan complete! ${newAlerts} new alert(s) detected.`);
+                showToast(`🚨 ${newAlerts} new fraud alert(s) detected!`, 'danger');
+            } else {
+                showToast('✅ Fraud scan complete. No new alerts.', 'success');
+            }
+
+            const container = document.getElementById('scanResults');
+            const scanHistory = await apiRequest('fraud_alerts.php');
+            const history = (scanHistory && !scanHistory.error) ? scanHistory : [];
+            document.getElementById('scanCount').textContent = history.length + ' scans';
+            if (history.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-microchip"></i> No scans run yet. Click "Run Full Scan" to begin.</div>`;
+            } else {
+                container.innerHTML = history.slice(0, 10).map(h => `
+                    <div style="background:rgba(168,85,247,0.05);padding:14px;border-radius:10px;margin-bottom:10px;border-left:3px solid ${h.severity === 'high' ? '#ff4444' : '#f59e0b'};">
+                        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                            <span><strong>${h.created_at ? new Date(h.created_at).toLocaleString() : 'N/A'}</strong> — ${h.type}</span>
+                            <span style="color:${h.severity === 'high' ? '#ff4444' : '#f59e0b'};font-size:13px;">${h.severity} severity</span>
+                        </div>
+                        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:6px;">${h.description}</div>
+                    </div>
+                `).join('');
+            }
+            refreshAll();
+        }
+
+        // ============================================================
+        // QUICK ACTIONS
+        // ============================================================
+        async function quickDetectFraud() {
+            const types = ['High Amount', 'Location Anomaly', 'Rapid Succession', 'Multiple Transfers', 'Suspicious Pattern'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const severity = ['high', 'medium', 'low'][Math.floor(Math.random() * 3)];
+            const desc = `Random fraud alert: ${type} detected`;
+            const data = { type, severity, description: desc, status: 'pending' };
+            const result = await apiRequest('fraud_alerts.php', 'POST', data);
+            if (result && result.success) {
+                showFraudBanner(`⚠️ ${type} alert generated!`);
+                showToast(`🚨 ${type} alert generated.`, 'danger');
+                refreshAll();
+            } else {
+                showToast('Failed to generate alert.', 'danger');
+            }
+        }
+
+        async function quickAddUser() {
+            const name = prompt('Enter customer name:');
+            if (!name || !name.trim()) return;
+            const email = prompt('Enter email:') || `${name.replace(/\s/g, '').toLowerCase()}@email.com`;
+            if (!validateEmail(email)) {
+                showToast('Invalid email format.', 'danger');
+                return;
+            }
+            const phone = prompt('Enter phone (01[3-9]XXXXXXXX):');
+            if (!phone || !validatePhone(phone)) {
+                showToast('Invalid phone number. Must be 11 digits starting with 013-019.', 'danger');
+                return;
+            }
+            const location = prompt('Enter location:');
+            if (!location || !location.trim()) {
+                showToast('Location is required.', 'danger');
+                return;
+            }
+            const data = { 
+                name: name.trim(), 
+                email: email.trim(), 
+                phone: phone.trim(), 
+                address: 'New Address', 
+                location: location.trim(),
+                status: 'active' 
+            };
+            const result = await apiRequest('customers.php', 'POST', data);
+            if (result && result.success) { showToast(`✅ Customer "${name.trim()}" added.`, 'success'); refreshAll(); }
+            else showToast('Failed to add customer.', 'danger');
+        }
+
+        async function quickAddReport() {
+            const title = prompt('Enter report title:');
+            if (!title || !title.trim()) return;
+            const data = { title: title.trim(), type: 'custom', description: 'Quick report generated.', status: 'pending' };
+            const result = await apiRequest('reports.php', 'POST', data);
+            if (result && result.success) { showToast('📄 Report added.', 'success'); refreshAll(); }
+            else showToast('Failed to add report.', 'danger');
+        }
+
+        // ============================================================
+        // REFRESH ALL
+        // ============================================================
+        async function refreshAll() {
+            await renderDashboard();
+            await renderCustomers();
+            await renderAccounts();
+            await renderTransactions();
+            await renderAlerts();
+            await renderReports();
+        }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar .menu-item').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) target.classList.add('active');
+            const menuItem = document.querySelector(`.sidebar .menu-item[data-page="${page}"]`);
+            if (menuItem) menuItem.classList.add('active');
+            if (page === 'dashboard') refreshAll();
+            if (page === 'customers') renderCustomers();
+            if (page === 'accounts') renderAccounts();
+            if (page === 'transactions') renderTransactions();
+            if (page === 'fraud-alerts') renderAlerts();
+            if (page === 'reports') renderReports();
+            if (page === 'fraud-detection') {
+                apiRequest('fraud_alerts.php').then(result => {
+                    const container = document.getElementById('scanResults');
+                    const history = (result && !result.error) ? result : [];
+                    document.getElementById('scanCount').textContent = history.length + ' scans';
+                    if (history.length === 0) {
+                        container.innerHTML = `<div class="empty-state"><i class="fas fa-microchip"></i> No scans run yet. Click "Run Full Scan" to begin.</div>`;
+                    } else {
+                        container.innerHTML = history.slice(0, 10).map(h => `
+                            <div style="background:rgba(168,85,247,0.05);padding:14px;border-radius:10px;margin-bottom:10px;border-left:3px solid ${h.severity === 'high' ? '#ff4444' : '#f59e0b'};">
+                                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                                    <span><strong>${h.created_at ? new Date(h.created_at).toLocaleString() : 'N/A'}</strong> — ${h.type}</span>
+                                    <span style="color:${h.severity === 'high' ? '#ff4444' : '#f59e0b'};font-size:13px;">${h.severity} severity</span>
+                                </div>
+                                <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:6px;">${h.description}</div>
+                            </div>
+                        `).join('');
+                    }
+                });
+            }
+        }
+
+        document.querySelectorAll('.sidebar .menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.dataset.page;
+                if (page) navigateTo(page);
+            });
+        });
+
+        // ============================================================
+        // TESTING MODULE
+        // ============================================================
+        async function runAllTests() {
+            const results = [];
+            let passed = 0, failed = 0;
+
+            try {
+                const result = await apiRequest('dashboard.php');
+                if (result && !result.error) { results.push('✅ Database connection: Working'); passed++; }
+                else { results.push('❌ Database connection: Failed'); failed++; }
+            } catch (e) { results.push('❌ Database connection: ' + e.message); failed++; }
+
+            try {
+                const result = await apiRequest('customers.php');
+                if (result && !result.error) { results.push(`✅ Customers API: ${result.length} records found`); passed++; }
+                else { results.push('❌ Customers API: Failed'); failed++; }
+            } catch (e) { results.push('❌ Customers API: ' + e.message); failed++; }
+
+            try {
+                const result = await apiRequest('accounts.php');
+                if (result && !result.error) { results.push(`✅ Accounts API: ${result.length} records found`); passed++; }
+                else { results.push('❌ Accounts API: Failed'); failed++; }
+            } catch (e) { results.push('❌ Accounts API: ' + e.message); failed++; }
+
+            try {
+                const result = await apiRequest('transactions.php');
+                if (result && !result.error) { results.push(`✅ Transactions API: ${result.length} records found`); passed++; }
+                else { results.push('❌ Transactions API: Failed'); failed++; }
+            } catch (e) { results.push('❌ Transactions API: ' + e.message); failed++; }
+
+            try {
+                const result = await apiRequest('fraud_alerts.php');
+                if (result && !result.error) { results.push(`✅ Fraud Alerts API: ${result.length} records found`); passed++; }
+                else { results.push('❌ Fraud Alerts API: Failed'); failed++; }
+            } catch (e) { results.push('❌ Fraud Alerts API: ' + e.message); failed++; }
+
+            try {
+                const result = await apiRequest('reports.php');
+                if (result && !result.error) { results.push(`✅ Reports API: ${result.length} records found`); passed++; }
+                else { results.push('❌ Reports API: Failed'); failed++; }
+            } catch (e) { results.push('❌ Reports API: ' + e.message); failed++; }
+
+            const container = document.getElementById('testResults');
+            const status = document.getElementById('testStatus');
+            status.textContent = `${passed}/${passed+failed} passed`;
+            status.className = `badge ${failed === 0 ? 'active' : 'pending'}`;
+            container.innerHTML = `
+                <div style="margin-bottom:16px;padding:12px;background:rgba(168,85,247,0.05);border-radius:10px;border:1px solid rgba(168,85,247,0.1);">
+                    <strong>📊 Test Summary</strong><br>
+                    <span style="color:#22c55e;">✅ Passed: ${passed}</span> &nbsp;|&nbsp;
+                    <span style="color:#ef4444;">❌ Failed: ${failed}</span> &nbsp;|&nbsp;
+                    <span style="color:rgba(255,255,255,0.4);">Total: ${passed+failed}</span>
+                    <span style="float:right;font-size:12px;color:rgba(255,255,255,0.3);">${new Date().toLocaleString()}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    ${results.map(r => `<div style="padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:6px;font-size:13px;border-left:3px solid ${r.startsWith('✅') ? '#22c55e' : '#ef4444'};">${r}</div>`).join('')}
+                </div>
+            `;
+            showToast(`🧪 Tests complete: ${passed}/${passed+failed} passed`, failed === 0 ? 'success' : 'warning');
+        }
+
+        function resetTestData() {
+            if (!confirm('⚠️ This will clear all data from the database. Continue?')) return;
+            showToast('Reset feature - would truncate all tables', 'warning');
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = sessionStorage.getItem('fraudLoggedInUser');
+            if (loggedInUser) {
+                try {
+                    const user = JSON.parse(loggedInUser);
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboardPage').style.display = 'block';
+                    document.getElementById('dashUserName').textContent = user.email;
+                    document.getElementById('dashAvatar').textContent = (user.name || user.email).charAt(0).toUpperCase();
+                    refreshAll();
+                } catch (e) {
+                    sessionStorage.removeItem('fraudLoggedInUser');
+                    document.getElementById('loginPage').style.display = 'flex';
+                    document.getElementById('dashboardPage').style.display = 'none';
+                }
+            } else {
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('dashboardPage').style.display = 'none';
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (document.getElementById('dashboardPage').style.display === 'block') {
+                    if (e.ctrlKey && e.shiftKey && e.key === 'F') { e.preventDefault(); quickDetectFraud(); }
+                    if (e.ctrlKey && e.shiftKey && e.key === 'R') { e.preventDefault(); quickAddReport(); }
+                    if (e.ctrlKey && e.shiftKey && e.key === 'U') { e.preventDefault(); quickAddUser(); }
+                    if (e.key === 'F5') { e.preventDefault(); refreshAll(); }
+                    if (e.ctrlKey && e.key === 'Enter' && document.getElementById('modalOverlay').classList.contains('show')) { e.preventDefault(); submitModal(); }
+                    if (e.key === 'Escape') { closeModal(); closeRegisterModal(); }
+                }
+                if (e.key === 'Escape' && document.getElementById('registerModal').classList.contains('show')) {
+                    closeRegisterModal();
+                }
+            });
+
+            document.getElementById('modalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            refreshAll();
+        });
+    </script>
+
+</body>
+</html>
